@@ -12,7 +12,7 @@ function ToDoRow({ toDoText }) {
 
 function ToDo({ text }) {
   return (
-    <text>{text}</text>
+    <div>{text}</div>
   )
 }
 
@@ -28,11 +28,11 @@ function DeleteToDo() {
   )
 }
 
-function EntryRow() {
+function EntryRow({ onAddToDoClick }) {
   return (
     <div>
       <ToDoEntry></ToDoEntry>
-      <AddTodoButton></AddTodoButton>
+      <AddTodoButton onAddToDoClick={onAddToDoClick}></AddTodoButton>
     </div>
   )
 }
@@ -43,26 +43,45 @@ function ToDoEntry({ }) {
   )
 }
 
-function AddTodoButton() {
+function AddTodoButton({ onAddToDoClick }) {
   return (
-    <Button value='+'></Button>
+    <Button value='+' onClick={onAddToDoClick}></Button>
   )
 }
 
-function Button({ value }) {
+function Button({ value, onClick }) {
+  const handleClick = () => {
+    onClick(value)
+  }
+
   return (
-    <button>{value}</button>
+    <button onClick={handleClick}>{value}</button>
   )
 }
 
 export default function ToDoList() {
   const [todos, setTodos] = useState([])
+  const [currentToDo, setCurrentToDo] = useState("")
+
+  const handleAddToDo = (task) => {
+    const newToDo = {
+      id: todos.length + 1,
+      task: task,
+      compelte: false,
+    };
+    setTodos([...todos, newToDo]);
+  }
 
   return (
     <>
-      <EntryRow></EntryRow>
-      <ToDoRow toDoText={"Do the laundry"}></ToDoRow>
-      <ToDoRow toDoText={"Make dinner"}></ToDoRow>
+      <EntryRow onAddToDoClick={handleAddToDo}></EntryRow>
+      <ul>
+        {todos.map(todo => (
+          <li key={todo.id}>
+            <ToDoRow text={todo.task}></ToDoRow>
+          </li>
+        ))}
+      </ul>
     </>
-  )
+  );
 }
