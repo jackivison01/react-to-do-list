@@ -105,8 +105,14 @@ export default function ToDoList() {
     setTodos(todos.filter(todo => todo.id !== id));
   }
 
-  const handleUntickTodo = () => {
+  const handleUntickTodo = (id) => {
     const todo = doneTodos.find(item => item.id === id);
+    if (!todo) return; // Safety check in case the todo is not found
+
+    // Create a new object for immutability
+    const updatedTodo = { ...todo, complete: false };
+    setTodos([...todos, updatedTodo]); // Move it back to the "todos" list
+    setDoneTodos(doneTodos.filter(doneTodo => doneTodo.id !== id));
   }
 
   return (
@@ -134,7 +140,7 @@ export default function ToDoList() {
               toDoText={todo.task}
               id={todo.id}
               handleDelete={handleDelete}
-              handleTickTodo={handleTickTodo}
+              handleTickTodo={handleUntickTodo}
               text={"Untick"}
             ></ToDoRow>
           </li>
