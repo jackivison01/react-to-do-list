@@ -31,15 +31,21 @@ function DeleteToDo({ id, handleDelete }) {
 function EntryRow({ onAddToDoClick, setToDo, currentToDo }) {
   return (
     <div>
-      <ToDoEntry setToDo={setToDo} currentToDo={currentToDo}></ToDoEntry>
+      <ToDoEntry setToDo={setToDo} currentToDo={currentToDo} onAddToDoClick={onAddToDoClick}></ToDoEntry>
       <AddTodoButton onAddToDoClick={onAddToDoClick} currentToDo={currentToDo}></AddTodoButton>
     </div>
   )
 }
 
-function ToDoEntry({ setToDo, currentToDo }) {
+function ToDoEntry({ setToDo, currentToDo, onAddToDoClick }) {
   const handleChange = (event) => {
     setToDo(event.target.value); // Update state with input value
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      onAddToDoClick(currentToDo);
+    };
   };
 
   return (
@@ -47,6 +53,7 @@ function ToDoEntry({ setToDo, currentToDo }) {
       placeholder="Enter todo here:"
       onChange={handleChange}
       value={currentToDo}
+      onKeyDown={handleKeyPress}
     ></input>
   );
 }
