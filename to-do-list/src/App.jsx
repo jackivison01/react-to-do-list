@@ -75,6 +75,8 @@ export default function ToDoList() {
   const [doneTodos, setDoneTodos] = useState([]);
 
   const handleAddToDo = () => {
+    if (!currentToDo) return;
+
     const newToDo = {
       id: newId,
       task: currentToDo,
