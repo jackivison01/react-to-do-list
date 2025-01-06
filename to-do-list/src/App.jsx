@@ -31,13 +31,13 @@ function DeleteToDo() {
 function EntryRow({ onAddToDoClick, setToDo, currentToDo }) {
   return (
     <div>
-      <ToDoEntry setToDo={setToDo}></ToDoEntry>
+      <ToDoEntry setToDo={setToDo} currentToDo={currentToDo}></ToDoEntry>
       <AddTodoButton onAddToDoClick={onAddToDoClick} currentToDo={currentToDo}></AddTodoButton>
     </div>
   )
 }
 
-function ToDoEntry({ setToDo }) {
+function ToDoEntry({ setToDo, currentToDo }) {
   const handleChange = (event) => {
     setToDo(event.target.value); // Update state with input value
   };
@@ -46,11 +46,12 @@ function ToDoEntry({ setToDo }) {
     <input
       placeholder="Enter todo here:"
       onChange={handleChange}
+      value={currentToDo}
     ></input>
   );
 }
 
-function AddTodoButton({ onAddToDoClick, setToDo, currentToDo }) {
+function AddTodoButton({ onAddToDoClick, currentToDo }) {
   return (
     <Button value='+' onClick={onAddToDoClick} currentToDo={currentToDo}></Button>
   )
@@ -78,6 +79,7 @@ export default function ToDoList() {
       compelte: false,
     };
     setTodos([...todos, newToDo]);
+    setCurrentToDo("");
   }
 
   return (
