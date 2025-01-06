@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-function ToDoRow({ toDoText }) {
+function ToDoRow({ toDoText, id, handleDelete }) {
   return (
     <div>
       <ToDo text={toDoText}></ToDo>
       <CheckToDo></CheckToDo>
-      <DeleteToDo></DeleteToDo>
+      <DeleteToDo id={id} handleDelete={handleDelete}></DeleteToDo>
     </div>
   )
 }
@@ -22,9 +22,9 @@ function CheckToDo() {
   )
 }
 
-function DeleteToDo() {
+function DeleteToDo({ id, handleDelete }) {
   return (
-    <Button value={"Bin"}></Button>
+    <Button value={"Bin"} onClick={() => handleDelete(id)}></Button>
   )
 }
 
@@ -71,16 +71,22 @@ function Button({ value, onClick, currentToDo }) {
 export default function ToDoList() {
   const [todos, setTodos] = useState([])
   const [currentToDo, setCurrentToDo] = useState("")
+  const [newId, setNewId] = useState(1)
 
   const handleAddToDo = () => {
     const newToDo = {
-      id: todos.length + 1,
+      id: newId,
       task: currentToDo,
       compelte: false,
     };
     setTodos([...todos, newToDo]);
     setCurrentToDo("");
+    setNewId(newId + 1);
   }
+
+  const handleDelete = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
 
   return (
     <>
@@ -88,7 +94,11 @@ export default function ToDoList() {
       <ul>
         {todos.map(todo => (
           <li key={todo.id}>
-            <ToDoRow toDoText={todo.task}></ToDoRow>
+            <ToDoRow
+              toDoText={todo.task}
+              id={todo.id}
+              handleDelete={handleDelete}
+            ></ToDoRow>
           </li>
         ))}
       </ul>
