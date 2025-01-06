@@ -28,30 +28,38 @@ function DeleteToDo() {
   )
 }
 
-function EntryRow({ onAddToDoClick }) {
+function EntryRow({ onAddToDoClick, setToDo, currentToDo }) {
   return (
     <div>
-      <ToDoEntry></ToDoEntry>
-      <AddTodoButton onAddToDoClick={onAddToDoClick}></AddTodoButton>
+      <ToDoEntry setToDo={setToDo}></ToDoEntry>
+      <AddTodoButton onAddToDoClick={onAddToDoClick} currentToDo={currentToDo}></AddTodoButton>
     </div>
   )
 }
 
-function ToDoEntry({ }) {
+function ToDoEntry({ setToDo }) {
+  const handleChange = (event) => {
+    setToDo(event.target.value); // Update state with input value
+  };
+
   return (
-    <input placeholder="Enter todo here:"></input>
+    <input
+      placeholder="Enter todo here:"
+      onChange={handleChange}
+    ></input>
+  );
+}
+
+function AddTodoButton({ onAddToDoClick, setToDo, currentToDo }) {
+  return (
+    <Button value='+' onClick={onAddToDoClick} currentToDo={currentToDo}></Button>
   )
 }
 
-function AddTodoButton({ onAddToDoClick }) {
-  return (
-    <Button value='+' onClick={onAddToDoClick}></Button>
-  )
-}
-
-function Button({ value, onClick }) {
+function Button({ value, onClick, currentToDo }) {
   const handleClick = () => {
-    onClick(value)
+    //setToDo();
+    onClick(currentToDo);
   }
 
   return (
@@ -63,10 +71,10 @@ export default function ToDoList() {
   const [todos, setTodos] = useState([])
   const [currentToDo, setCurrentToDo] = useState("")
 
-  const handleAddToDo = (task) => {
+  const handleAddToDo = () => {
     const newToDo = {
       id: todos.length + 1,
-      task: task,
+      task: currentToDo,
       compelte: false,
     };
     setTodos([...todos, newToDo]);
@@ -74,11 +82,11 @@ export default function ToDoList() {
 
   return (
     <>
-      <EntryRow onAddToDoClick={handleAddToDo}></EntryRow>
+      <EntryRow onAddToDoClick={handleAddToDo} setToDo={setCurrentToDo} currentToDo={currentToDo}></EntryRow>
       <ul>
         {todos.map(todo => (
           <li key={todo.id}>
-            <ToDoRow text={todo.task}></ToDoRow>
+            <ToDoRow toDoText={todo.task}></ToDoRow>
           </li>
         ))}
       </ul>
