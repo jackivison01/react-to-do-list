@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-function ToDoRow({ toDoText, id, handleDelete }) {
+function ToDoRow({ toDoText, id, handleDelete, handleTickTodo, text }) {
   return (
     <div>
       <ToDo text={toDoText}></ToDo>
-      <CheckToDo></CheckToDo>
+      <CheckToDo id={id} handleTickTodo={handleTickTodo} text={text}></CheckToDo>
       <DeleteToDo id={id} handleDelete={handleDelete}></DeleteToDo>
     </div>
   )
@@ -16,9 +16,9 @@ function ToDo({ text }) {
   )
 }
 
-function CheckToDo() {
+function CheckToDo({ id, handleTickTodo, text }) {
   return (
-    <Button value={"Tick"}></Button>
+    <Button value={text} onClick={() => handleTickTodo(id)}></Button>
   )
 }
 
@@ -69,15 +69,16 @@ function Button({ value, onClick, currentToDo }) {
 }
 
 export default function ToDoList() {
-  const [todos, setTodos] = useState([])
-  const [currentToDo, setCurrentToDo] = useState("")
-  const [newId, setNewId] = useState(1)
+  const [todos, setTodos] = useState([]);
+  const [currentToDo, setCurrentToDo] = useState("");
+  const [newId, setNewId] = useState(1);
+  const [doneTodos, setDoneTodos] = useState([]);
 
   const handleAddToDo = () => {
     const newToDo = {
       id: newId,
       task: currentToDo,
-      compelte: false,
+      complete: false,
     };
     setTodos([...todos, newToDo]);
     setCurrentToDo("");
@@ -85,12 +86,33 @@ export default function ToDoList() {
   }
 
   const handleDelete = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+    if (todos.some(todo => todo.id === id)) {
+      // If the todo is in the "todos" list
+      setTodos(todos.filter(todo => todo.id !== id));
+    } else if (doneTodos.some(todo => todo.id === id)) {
+      // If the todo is in the "doneTodos" list
+      setDoneTodos(doneTodos.filter(todo => todo.id !== id));
+    }
   };
+
+  const handleTickTodo = (id) => {
+    const todo = todos.find(item => item.id === id);
+    if (!todo) return; // Safety check in case todo is not found
+
+    // Create a new object for immutability
+    const newDoneTodo = { ...todo, complete: true };
+    setDoneTodos([...doneTodos, newDoneTodo]);
+    setTodos(todos.filter(todo => todo.id !== id));
+  }
+
+  const handleUntickTodo = () => {
+    const todo = doneTodos.find(item => item.id === id);
+  }
 
   return (
     <>
       <EntryRow onAddToDoClick={handleAddToDo} setToDo={setCurrentToDo} currentToDo={currentToDo}></EntryRow>
+      <div>Todo</div>
       <ul>
         {todos.map(todo => (
           <li key={todo.id}>
@@ -98,6 +120,22 @@ export default function ToDoList() {
               toDoText={todo.task}
               id={todo.id}
               handleDelete={handleDelete}
+              handleTickTodo={handleTickTodo}
+              text={"Tick"}
+            ></ToDoRow>
+          </li>
+        ))}
+      </ul>
+      <div>Done</div>
+      <ul>
+        {doneTodos.map(todo => (
+          <li key={todo.id}>
+            <ToDoRow
+              toDoText={todo.task}
+              id={todo.id}
+              handleDelete={handleDelete}
+              handleTickTodo={handleTickTodo}
+              text={"Untick"}
             ></ToDoRow>
           </li>
         ))}
